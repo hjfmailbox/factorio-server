@@ -3,7 +3,7 @@ services:
   factorio-server:
     image: hjfmailbox/factorio-server:1.1.42
     container_name: factorio-server
-    restart: always
+    #restart: always
     environment:
       - PUID=845
       - PGID=845
@@ -15,6 +15,7 @@ services:
       - ./factorio/saves:/factorio/saves
       - ./factorio/config:/factorio/config
       - ./factorio/mods:/factorio/mods
+      - ./factorio/server-settings.json:/factorio/server-settings.json
     ports:
      - "34197:34197/udp"
      - "27015:27015/tcp"

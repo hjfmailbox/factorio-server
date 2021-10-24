@@ -18,6 +18,7 @@ ENV PORT=34197 \
     SAVES=/factorio/saves \
     CONFIG=/factorio/config \
     MODS=/factorio/mods \
+    SERVER_SETTINGS=/factorio/server-settings.json \
     SCENARIOS=/factorio/scenarios \
     SCRIPTOUTPUT=/factorio/script-output \
     PUID="$PUID" \
@@ -28,23 +29,25 @@ ENV PORT=34197 \
 
 RUN sed -i s@/archive.ubuntu.com/@/mirrors.aliyun.com/@g /etc/apt/sources.list \
     && sed -i s@/security.ubuntu.com/@/mirrors.aliyun.com/@g /etc/apt/sources.list \
-	&& apt clean \
+    && apt clean \
     && apt-get update -y \
     && apt upgrade -y \
-	&& apt install wget curl tar xz-utils libc6-amd64-cross qemu-user -y \
-	&& mkdir -p /opt /factorio \	
+    && apt install wget curl tar xz-utils libc6-amd64-cross qemu-user -y \
+    && mkdir -p /opt /factorio \	
     && curl -sSL "https://www.factorio.com/get-download/$VERSION/headless/linux64" -o "$archive" \
     && echo "$archive" \
     && tar -xf "$archive" --directory /opt \
     && chmod ugo=rwx /opt/factorio \
-	&& rm "$archive" \
+    && rm "$archive" \
     && ln -s "$SCENARIOS" /opt/factorio/scenarios \
     && ln -s "$SAVES" /opt/factorio/saves \
+    && ln -s "$MODS" /opt/factorio/mods \
+    && ln -s "$SERVER_SETTINGS" /opt/factorio/data/server-settings.json \
     && mkdir -p /opt/factorio/config/ \
     && addgroup --gid "$PGID" "$GROUP" \
-	&& useradd -u "$PUID" -g "$PGID" -m -s /bin/sh "$USER" \
+    && useradd -u "$PUID" -g "$PGID" -m -s /bin/sh "$USER" \
     && chown -R "$USER":"$GROUP" /opt/factorio /factorio
 
 EXPOSE $PORT/udp $RCON_PORT/tcp
 
-ENTRYPOINT ["/bin/qemu-x86_64", "-L", "/usr/x86_64-linux-gnu", "/opt/factorio/bin/x64/factorio", "--start-server","/opt/factorio/saves/save.zip"]
+ENTRYPOINT ["/bin/qemu-x86_64", "-L", "/usr/x86_64-linux-gnu", "/opt/factorio/bin/x64/factorio", "--start-server", "/factorio/saves/save.zip", "--server-settings", "/factorio/server-settings.json"]
