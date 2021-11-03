@@ -1,6 +1,11 @@
 version: "3"
 services:
   factorio-server:
+    build:
+      context: .
+      args:
+      - VERSION=1.1.42
+      - SHA256=42909906a258dcd538148258dcb0ee9e03ca063851d3d8ca03d17126993b41d0
     image: hjfmailbox/factorio-server:1.1.42
     container_name: factorio-server
     #restart: always
@@ -10,12 +15,10 @@ services:
       - UPDATE_MODS_ON_START=false
       - USERNAME=
       - TOKEN=
-      - PORT=34197    
+      - PORT=34197
+      - RCON_PORT=27015
     volumes:
-      - ./factorio/saves:/factorio/saves
-      - ./factorio/config:/factorio/config
-      - ./factorio/mods:/factorio/mods
-      - ./factorio/server-settings.json:/factorio/server-settings.json
+      - ./factorio:/factorio
     ports:
      - "34197:34197/udp"
      - "27015:27015/tcp"
