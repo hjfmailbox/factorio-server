@@ -53,7 +53,7 @@ RUN set -ox pipefail \
     && apt clean \
     && apt-get update -y \
     && apt upgrade -y \
-    && apt install wget curl tar xz-utils libc6-amd64-cross qemu-user pwgen -y \	
+    && apt install apt-utils wget curl tar xz-utils libc6-amd64-cross qemu-user pwgen -y \	
     && curl -sSL "https://www.factorio.com/get-download/$VERSION/headless/linux64" -o "$archive" \
 	&& echo "$SHA256  $archive" | sha256sum -c \
     || (sha256sum "$archive" && file "$archive" && exit 1) \
@@ -64,7 +64,8 @@ RUN set -ox pipefail \
     && ln -s "$SAVES" /opt/factorio/saves \
     && addgroup --gid "$PGID" "$GROUP" \
     && useradd -u "$PUID" -g "$PGID" -m -s /bin/sh "$USER" \
-    && chown -R "$USER":"$GROUP" /opt/factorio /factorio
+    && chown -R "$USER":"$GROUP" /opt/factorio /factorio \
+	&& chmod +x /docker-entrypoint.sh
 
 VOLUME /factorio
 EXPOSE $PORT/udp $RCON_PORT/tcp
