@@ -25,7 +25,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
     PUID=${PUID} \
     PGID=${PGID} 
 
-COPY factorio_headless_x64_$VERSION.tar.xz /tmp/factorio_headless_x64_$VERSION.tar.xz
+#COPY factorio_headless_x64_$VERSION.tar.xz /tmp/factorio_headless_x64_$VERSION.tar.xz
 COPY files/scripts/*.sh /
 
 #for arm64
@@ -54,7 +54,7 @@ RUN set -ox pipefail \
     && apt-get update -y \
     && apt upgrade -y \
     && apt install wget curl tar xz-utils libc6-amd64-cross qemu-user pwgen -y \	
-    #&& curl -sSL "https://www.factorio.com/get-download/$VERSION/headless/linux64" -o "$archive" \
+    && curl -sSL "https://www.factorio.com/get-download/$VERSION/headless/linux64" -o "$archive" \
 	&& echo "$SHA256  $archive" | sha256sum -c \
     || (sha256sum "$archive" && file "$archive" && exit 1) \
     && tar -xf "$archive" --directory /opt \
